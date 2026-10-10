@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Compare 2–8 options with your own criteria, weights and scores. Separate benefits from costs and inspect weighted contributions. Open and download JSON drafts on your device.">
+  <title>Weighted decision matrix | Compare options and criteria — GlossQuote-Labs</title>
+  <link rel="stylesheet" href="../styles/tokens.css">
+  <link rel="stylesheet" href="../styles/app.css">
+  <script type="module" src="../js/app.mjs"></script>
+</head>
+<body>
+<div id="page-content">
+  <a class="skip" href="#workspace">Skip to comparison</a>
+  <header class="topbar"><a href="https://glossquote.com/en/index.html">GlossQuote-Labs</a><nav aria-label="Language"><a href="../index.html" lang="zh-Hant" hreflang="zh-Hant">繁體中文</a><span aria-current="page">English</span></nav></header>
+  <main>
+    <div class="intro"><div><h1>Weighted decision matrix</h1><p class="lead">List your options and criteria, set their importance, then score each option. Make your trade-offs easier to check.</p></div><p class="privacy">Your work stays in this page’s memory.<br>No autosave. Refreshing resets it.</p></div>
+    <p id="js-note" class="notice">JavaScript is needed to edit and calculate. The formula, limits and instructions remain available below.</p>
+    <fieldset id="workspace" hidden>
+      <legend class="sr-only">Comparison workspace</legend>
+      <div class="workspace-toolbar"><div class="title-field"><label for="comparison-title">Comparison title</label><input id="comparison-title" maxlength="160" aria-describedby="comparison-title-error"><p id="comparison-title-error" class="field-error"></p></div><div class="file-actions"><button id="open-file" type="button" disabled>Open comparison file</button><button id="download-file" type="button" disabled>Download comparison file</button></div></div>
+      <input id="file-input" type="file" accept="application/json,.json" hidden>
+      <p class="hint">The download includes your text, weights and scores. Only your selected JSON file is opened, up to 64 KiB.</p>
+      <p id="io-status" role="status" aria-live="polite"></p><button id="cancel-read" type="button" hidden>Cancel opening</button>
+      <section aria-labelledby="criteria-heading"><div class="section-heading"><h2 id="criteria-heading">Criteria and weights</h2><button id="add-criterion" type="button">Add criterion</button></div><p class="hint">Weights range from 0–100 and need not total 100. For costs, score the burden: 1 low, 5 high.</p><div id="criteria"></div></section>
+      <section aria-labelledby="matrix-heading"><div class="section-heading"><h2 id="matrix-heading">Score your options</h2><span class="hint">Benefit: 1 low, 5 high · Cost: 1 low burden, 5 high burden</span></div><div id="matrix-region" class="matrix-scroll" tabindex="0" role="region" aria-label="Option score table, scroll horizontally"><table id="matrix"></table></div><div class="matrix-actions"><button id="add-option" class="primary" type="button">Add option</button><span class="hint">2–8 options · 1–8 criteria</span></div></section>
+      <section class="results-section" aria-labelledby="results-heading"><div class="section-heading"><h2 id="results-heading">Ranking and breakdown</h2><button id="clear-all" class="quiet" type="button">Clear all</button></div><p id="work-status" class="notice" role="status" aria-live="polite"></p><div id="results"></div><p class="hint">Scores reflect your input. They are neither an objective best answer nor a probability.</p></section>
+    </fieldset>
+    <section class="guide" aria-labelledby="guide-heading"><h2 id="guide-heading">Compare and check</h2><ol><li>Name the options and criteria. Set each criterion’s direction and relative importance.</li><li>Score every option from 1–5. Missing active scores pause the entire ranking.</li><li>Inspect the ranking and expand each weighted breakdown. Editing weights or scores updates the results.</li><li>To keep a draft, download a JSON file. Open it later and confirm replacement.</li></ol><h3>The formula</h3><p>Benefit u = score − 1; cost u = 5 − score. Numerator N = Σ(weight × u), total weight W = Σ weight, and percentage score = 25 × N ÷ W. Zero weights do not contribute; a zero total cannot be ranked.</p><p>Ranking compares integer N. Ties keep the original option order with ranks such as 1, 1, 3. Displayed scores have two decimal places. This model organizes subjective trade-offs; it does not decide for you.</p><h3>Data and limits</h3><p>No accounts, uploads, analytics or autosave. After website assets load, scores and files are processed on your device. Clearing does not delete downloaded files. Switching language opens a separate page; download first to keep your work.</p><p>Up to 8 × 8 cells, 80 characters for the title and 40 for names. UTF-8 JSON files are limited to 65,536 bytes. Missing browser capabilities disable file actions while keeping the core comparison available.</p><h2>Frequently asked questions</h2><details><summary>Must weights add up to 100?</summary><p>No. Weights are divided by their total. Zero-weight criteria do not contribute.</p></details><details><summary>How do I score costs?</summary><p>Score the cost or burden: 1 low, 5 high. Calculation reverses this so lower is more favorable.</p></details><details><summary>What if some scores are missing?</summary><p>Any missing score for a positive-weight criterion hides all totals and ranks.</p></details><details><summary>Is the top-ranked option always right for me?</summary><p>The ranking follows your criteria, weights and scores. It organizes trade-offs and cannot replace your judgment about the situation.</p></details><details><summary>Can I save and continue later?</summary><p>Download a JSON comparison file, then open it later. This tool does not automatically save or sync.</p></details></section>
+  </main><footer><a href="https://glossquote.com/en/index.html">Back to GlossQuote-Labs tools</a><span>Your device. Your judgment.</span></footer>
+</div>
+<dialog id="confirm-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-body"><h2 id="dialog-title"></h2><p id="dialog-body"></p><div id="dialog-preview"></div><div class="dialog-actions"><button id="dialog-cancel" type="button"></button><button id="dialog-confirm" type="button" class="primary"></button></div></dialog>
+</body>
+</html>

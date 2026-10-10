@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="用自訂準則與權重比較 2 至 8 個方案，區分效益與成本並查看加權分數。資料在本頁處理，可自行下載與開啟 JSON 比較檔。">
+  <title>權重決策矩陣｜比較方案、權重與評分 — GlossQuote-Labs</title>
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/app.css">
+  <script type="module" src="js/app.mjs"></script>
+</head>
+<body>
+<div id="page-content">
+  <a class="skip" href="#workspace">跳到比較工作區</a>
+  <header class="topbar"><a href="https://glossquote.com/index.html">GlossQuote-Labs</a><nav aria-label="語言"><span aria-current="page">繁體中文</span><a href="en/index.html" lang="en" hreflang="en">English</a></nav></header>
+  <main>
+    <div class="intro"><div><h1>權重決策矩陣</h1><p class="lead">把選項與考量列出，設定重要程度，再為方案評分。讓自己的取捨更容易核對。</p></div><p class="privacy">資料只留在本頁記憶體。<br>不自動儲存；重新整理會重設。</p></div>
+    <p id="js-note" class="notice">需要 JavaScript 才能編輯與計算。下方保留公式、限制與使用說明。</p>
+    <fieldset id="workspace" hidden>
+      <legend class="sr-only">比較工作區</legend>
+      <div class="workspace-toolbar"><div class="title-field"><label for="comparison-title">比較標題</label><input id="comparison-title" maxlength="160" aria-describedby="comparison-title-error"><p id="comparison-title-error" class="field-error"></p></div><div class="file-actions"><button id="open-file" type="button" disabled>開啟比較檔</button><button id="download-file" type="button" disabled>下載比較檔</button></div></div>
+      <input id="file-input" type="file" accept="application/json,.json" hidden>
+      <p class="hint">下載檔案會包含你輸入的文字、權重與分數。只開啟自己選擇的 JSON 比較檔，最多 64 KiB。</p>
+      <p id="io-status" role="status" aria-live="polite"></p><button id="cancel-read" type="button" hidden>取消開啟</button>
+      <section aria-labelledby="criteria-heading"><div class="section-heading"><h2 id="criteria-heading">準則與權重</h2><button id="add-criterion" type="button">新增準則</button></div><p class="hint">權重 0–100，不必合計 100。成本型評的是負擔程度：1 低、5 高。</p><div id="criteria"></div></section>
+      <section aria-labelledby="matrix-heading"><div class="section-heading"><h2 id="matrix-heading">方案評分</h2><span class="hint">效益：1 低、5 高 · 成本：1 低負擔、5 高負擔</span></div><div id="matrix-region" class="matrix-scroll" tabindex="0" role="region" aria-label="方案評分表，可左右捲動"><table id="matrix"></table></div><div class="matrix-actions"><button id="add-option" class="primary" type="button">新增方案</button><span class="hint">2–8 個方案 · 1–8 項準則</span></div></section>
+      <section class="results-section" aria-labelledby="results-heading"><div class="section-heading"><h2 id="results-heading">排序與明細</h2><button id="clear-all" class="quiet" type="button">清空全部</button></div><p id="work-status" class="notice" role="status" aria-live="polite"></p><div id="results"></div><p class="hint">分數呈現你的輸入，不代表客觀最佳答案，也不是機率。</p></section>
+    </fieldset>
+    <section class="guide" aria-labelledby="guide-heading"><h2 id="guide-heading">怎麼比較與核對</h2><ol><li>命名方案與準則，設定每項準則的方向及相對重要程度。</li><li>為每個方案填 1–5 分。正權重格子缺分時，整份比較暫不顯示排行。</li><li>查看排序，展開加權明細。改權重或分數時，結果即時更新。</li><li>想保留草稿時，自行下載 JSON 檔；下次選檔開啟並確認取代。</li></ol><h3>公開公式</h3><p>效益 u = 評分 − 1；成本 u = 5 − 評分。分子 N = Σ（權重 × u），總權重 W = Σ 權重，百分制分數 = 25 × N ÷ W。權重 0 不計入；總權重 0 不排名。</p><p>以整數 N 比較；平手維持原方案順序，名次為 1、1、3。顯示分數至小數點後兩位。這是整理主觀取捨的模型，不替你做決定。</p><h3>資料處理與限制</h3><p>沒有帳號、上傳、分析追蹤或自動保存。載入網站資產後，評分與檔案處理在裝置上完成。清空不會刪除已下載檔案。語言切換會開啟另一語頁，請先下載以保留內容。</p><p>最多 8 × 8 格，標題 80 字、名稱 40 字；UTF-8 JSON 檔限 65,536 bytes。瀏覽器能力缺失會禁用檔案功能，核心比較仍可使用。</p><h2>常見問題</h2><details><summary>權重要加起來等於 100 嗎？</summary><p>不用。按總權重換算比例；權重 0 的準則不計入。</p></details><details><summary>成本型怎麼給分？</summary><p>評成本或負擔程度：1 低、5 高；計算時反轉成越低越有利。</p></details><details><summary>有些格沒填會怎樣？</summary><p>任何大於 0 權重的格子未評分，就暫不顯示所有方案的總分與排行。</p></details><details><summary>第一名一定最適合我嗎？</summary><p>排名由你設定的準則、權重與評分計算。它幫助整理取捨，不能替代情境判斷。</p></details><details><summary>可以保存再繼續嗎？</summary><p>可自行下載 JSON 比較檔，之後選檔開啟。本工具不自動儲存或同步。</p></details></section>
+  </main><footer><a href="https://glossquote.com/index.html">回 GlossQuote-Labs 工具首頁</a><span>在自己的裝置整理自己的判斷</span></footer>
+</div>
+<dialog id="confirm-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-body"><h2 id="dialog-title"></h2><p id="dialog-body"></p><div id="dialog-preview"></div><div class="dialog-actions"><button id="dialog-cancel" type="button"></button><button id="dialog-confirm" type="button" class="primary"></button></div></dialog>
+</body>
+</html>
