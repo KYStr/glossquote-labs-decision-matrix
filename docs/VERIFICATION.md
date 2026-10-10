@@ -69,3 +69,9 @@ Cloudflare設定僅候選，無正式部署/host驗收或帳戶/DNS改動。官�
 最終全套31項：首次30PASS/1FAIL（scaffold新增no-extension巢狀404本文未回）；serve修復共用notFound，受影響scaffold2/2 exit0。其餘29未變沿用PASS，check再次exit0、build previewexit0。保留原FAIL和修復證據，不將NOT_RUN當PASS。源副本需要獨立重跑確認可獨立使用；其證據由T08追加。
 
 環境full fingerprint before/after-build一致，無持續PATH/TEMP/TMP/registry更動。開始時其他工具/根GlossGate已未提交的改動未碰；本工具新程式與文檔是本次唯一產品寫入範圍。系統與他人工作不收尾/不清除。
+
+## T08 獨立來源副本
+
+經source-review-v2清單審查的38檔副本於本工具專用github-publish目錄：`npm.cmd test` exit0 **31/31**，`npm.cmd run check` exit0，`npm.cmd run build` exit0，產物14，證實不用孵化器其他檔案。發布目標KYStr/glossquote-labs-decision-matrix已PUBLIC，implementation commit774dd595a1ed9f09ac1f466abba91756aa499309；copy local HEAD、Git ls-remote main、GitHub commits API一致，Git tree與reviewed path list一致、逐檔內容按換行正規化一致。真hosting仍未部署。
+
+來源核驗helper初次以泛用token子字串過濾，誤拒必要CSS tokens.css；改成與已審查精確38檔清單比對，exit0。這是核驗器false positive修正，沒有放行新來源/隱藏資料；公開樹始終同38檔。此後只發布候選/驗收紀錄的documentation-only更新，不變更已通過的程式，不重跑無關gate。
