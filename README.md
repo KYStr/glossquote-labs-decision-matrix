@@ -1,5 +1,15 @@
 # 權重決策矩陣
 
+## Current live release — 2026-10-11
+
+[繁體中文](https://decide.glossquote.com/index.html) · [English](https://decide.glossquote.com/en/index.html)
+
+Deployed source: [f99595e10aab](https://github.com/KYStr/glossquote-labs-decision-matrix/commit/f99595e10aabab97d8ee2ab3e7a0999506b65b88); Cloudflare version `70679fb3-726a-4056-be7d-49de3a6dd7aa`. This dated status supersedes older candidate-only or NOT_DEPLOYED notes below. Later documentation-only commits do not change the deployed assets.
+
+Release verification passed: 14 public assets matched the reviewed build byte for byte across 32 HTTP response checks, including HTTPS, security headers, MIME, bilingual SEO, robots/sitemap, missing paths and configured redirects. Both language pages received scoped browser checks. Missing scores, ties, cost direction, zero total weight and a native JSON download preserving null scores were checked.
+
+The runtime retains its previously accepted offline test evidence; this release changes hosting configuration and documentation, not tool algorithms. Full Network/Storage inspection, physical devices, assistive technology and all remaining documented manual checks are still NOT_RUN. Live publication is not a claim of exhaustive certification or search-engine indexing.
+
 GlossQuote-Labs。原生瀏覽器工具，繁體中文與英文。本機實作已完成，來源公開與正式網站狀態另見 docs/RELEASE-CANDIDATE.md。
 
 給需要比較數個方案的人：列出評估準則與權重，填寫 1–5 分，查看可解釋的加權分數與排序。MVP 讓人整理自己的判斷，沒有 AI 自動推薦，也不替人作決定。
