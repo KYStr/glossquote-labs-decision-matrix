@@ -1,6 +1,6 @@
 # 產品規格：權重決策矩陣
 
-這是規格，尚未實作。
+原 MVP 已實作並於 2026-10-11 發布；歷史規格如下。2026-10-13 的 U08 前列方案差異為新候選，狀態與驗收以 HANDOFF／docs/VERIFICATION 最新紀錄為準，不繼承舊版外驗結果。
 
 ## 工作與固定選擇
 
@@ -27,3 +27,11 @@
 錯誤碼：`INVALID_SCHEMA`、`UNKNOWN_VERSION`、`DUPLICATE_KEY`、`TOO_DEEP`、`FILE_TOO_LARGE`、`INVALID_UTF8`、`INVALID_JSON`、`INVALID_LABEL`、`DUPLICATE_LABEL`、`INVALID_WEIGHT`、`INVALID_SCORE`、`INVALID_REFERENCE`、`MISSING_SCORES`、`ZERO_WEIGHT`、`LIMIT_REACHED`、`MINIMUM_REQUIRED`、`READ_FAILED`、`EXPORT_FAILED`。將固定碼映射人類文案，不回顯raw exception、檔案內容或本機路徑。
 
 不合法draft可以暫留欄位供修改，但不能排名或匯出。沒有自行儲存或自動恢復；重新整理回預設空評分表。ACCEPTANCE通過才是本機MVP完成；公開發布另案。模版庫、圖表、檔案格式擴充、權重敏感度分析都留待未來，禁止順手加入。
+
+## U08 前列方案的準則貢獻差（2026-10-13）
+
+使用者完成評分後，可在原排名下直接核對前兩個顯示方案的取捨；逐方案明細仍保留。新表最多8行，顯示準則／方向、權重／占比、兩個方案各自的原評分與百分制貢獻，以及前者減後者的差值。正／負差均附哪個方案在此準則較有利的文字，零差寫「此項相同」。成本原評分仍表示負擔程度，不能推測錢額或更便宜。
+
+對象只取既有 stable ranked[0]/ranked[1]；完整列出與它們同名次的方案，包含三人以上並列第一及多人並列第二。不以原顯示順序製造勝者、不新增任意 pair 選單或推薦算法。權重0仍顯示未計入、0貢獻／0差與原評分；null 顯示未評分。
+
+差值與總差由原始整數分子計算；顯示值分別四捨五入，相加可能與總分或總差不同，沒有0.01上限宣稱。無效、正權重缺分或總權重0在當次 refresh 清除整個差異區；新合法資料立即重選 pair。匯入／清空取消或壞檔保留原結果，確認才替換／重設。差異不進草稿、URL、storage 或原 schemaVersion1 匯出。

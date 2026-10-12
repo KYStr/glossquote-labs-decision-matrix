@@ -69,6 +69,16 @@ summary { cursor: pointer; min-height: 44px; padding: var(--gq-space-3) var(--gq
 .contributions { list-style: none; padding: 0; }
 .contributions li { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--gq-space-2) var(--gq-space-4); padding: var(--gq-space-2) 0; }
 .contributions li span { overflow-wrap: anywhere; }
+.leading-comparison { padding-top: var(--gq-space-6); border-top: 1px solid var(--gq-color-separator); }
+.leading-comparison h3 { margin-top: 0; }
+.comparison-summary { font-weight: 650; }
+.comparison-summary,.comparison-group { overflow-wrap: anywhere; }
+.comparison-table { min-width: 58rem; }
+.comparison-table thead th:first-child,.comparison-table tbody th { min-width: 12rem; max-width: 18rem; overflow-wrap: anywhere; }
+.comparison-table thead th:nth-child(2) { min-width: 8rem; }
+.comparison-table td span { display: block; overflow-wrap: anywhere; margin-bottom: var(--gq-space-2); }
+.comparison-table td small { display: block; }
+.comparison-table .data-value { font-family: var(--gq-font-data); }
 .confirm-inline { background: var(--gq-color-warning-surface); padding: var(--gq-space-3); grid-column: 1/-1; max-width: 24rem; font-weight: 400; }
 .confirm-inline p { margin-top: 0; }.confirm-inline button { margin: var(--gq-space-1); }
 .guide { max-width: var(--gq-layout-reading-max); border-top: 1px solid var(--gq-color-separator); padding-top: var(--gq-space-8); margin-top: var(--gq-space-12); }

@@ -1,7 +1,7 @@
 import { validateDocument, normalizeLabel, parseUIWeight } from './core/schema.mjs';
-import { scoreDocument } from './core/scoring.mjs';
+import { compareLeadingPair } from './core/comparison.mjs';
 import { createDefaultDocument, addOption, addCriterion, removeOption, removeCriterion } from './core/matrix.mjs';
-import { messages, translate } from './i18n.mjs';
+import { messages, translate, formatSignedPoints } from './i18n.mjs';
 import { supportsFileIO, createImportController, createDownloader } from './file-io.mjs';
 
 const locale = document.documentElement.lang === 'en' ? 'en' : 'zh-Hant';
@@ -52,7 +52,7 @@ function refresh() {
     $(`header-${c.id}`).replaceChildren(node('span',c.label),node('small',copy[c.direction]));
   });
   draft.options.forEach(o=>{$(`remove-${o.id}`).setAttribute('aria-label',`${copy.remove} ${o.label}`);$(`option-display-${o.id}`).textContent=o.label;draft.criteria.forEach(c=>{$(`score-${o.id}-${c.id}`).setAttribute('aria-label',`${o.label} / ${c.label} / ${copy[c.direction]} / ${copy.score}`);});});
-  const scored=checked.ok?scoreDocument(checked.value):checked;
+  const scored=checked.ok?compareLeadingPair(checked.value):checked;
   const status=!checked.ok?t('invalid'):scored.ok?t('ready'):scored.code==='MISSING_SCORES'?t('missing',{count:scored.missingCount}):copy.errors[scored.code];
   if($('work-status').textContent!==status)$('work-status').textContent=status;
   $('work-status').classList.toggle('ready',scored.ok);
@@ -76,7 +76,35 @@ function renderResults(scored,doc) {
     result.contributions.forEach((part,j)=>{const c=doc.criteria[j];const li=node('li');li.append(node('span',`${c.label} (${copy[c.direction]})`),node('span',`${c.weight} × ${part.utility} × 25 ÷ ${scored.value.totalWeight} = ${format(part.contribution)}`,'formula'));contributions.append(li);});
     details.append(contributions);row.append(line,details);list.append(row);
   }
-  area.append(list,node('p',t('rounding'),'hint'));
+  area.append(list,renderLeadingComparison(scored.value,doc),node('p',t('rounding'),'hint'));
+}
+function renderLeadingComparison(value,doc) {
+  const names=new Map(doc.options.map(option=>[option.id,option.label]));
+  const first=names.get(value.firstOptionId),second=names.get(value.secondOptionId);
+  const comparison=node('section',undefined,'leading-comparison');comparison.id='leading-comparison';
+  const heading=node('h3',t('comparisonTitle'));heading.id='leading-comparison-heading';
+  comparison.setAttribute('aria-labelledby',heading.id);comparison.append(heading);
+  const summary=node('p',t(value.tied?'comparisonTie':'comparisonDifference',{first,second,delta:format(value.totalDeltaScore)}),'comparison-summary');summary.id='leading-comparison-summary';comparison.append(summary);
+  if(value.firstRankOptionIds.length>1)comparison.append(node('p',t('comparisonFirstGroup',{names:value.firstRankOptionIds.map(id=>names.get(id)).join(copy.comparisonNameSeparator),rank:value.firstRank,first,second}),'comparison-group'));
+  if(value.secondRank!==value.firstRank&&value.secondRankOptionIds.length>1)comparison.append(node('p',t('comparisonSecondGroup',{names:value.secondRankOptionIds.map(id=>names.get(id)).join(copy.comparisonNameSeparator),rank:value.secondRank,first,second}),'comparison-group'));
+  const scroll=node('div',undefined,'matrix-scroll');scroll.id='leading-comparison-region';scroll.tabIndex=0;scroll.setAttribute('role','region');scroll.setAttribute('aria-label',t('comparisonRegion'));
+  const table=node('table',undefined,'comparison-table');table.id='leading-comparison-table';table.append(node('caption',t('comparisonCaption',{first,second})));
+  const head=node('thead'),headers=node('tr');
+  for(const label of [copy.comparisonCriterion,copy.weight+' / '+copy.share,first,second,t('comparisonDelta',{first,second})]){const cell=node('th',label);cell.scope='col';headers.append(cell);}
+  head.append(headers);table.append(head);
+  const body=node('tbody');
+  value.criteria.forEach(part=>{
+    const criterion=doc.criteria.find(item=>item.id===part.criterionId),row=node('tr');
+    const label=node('th',criterion.label);label.scope='row';label.append(node('small',copy[part.direction]));if(!part.active)label.append(node('small',t('comparisonInactive')));row.append(label);
+    const weight=node('td');weight.append(node('span',String(part.weight),'data-value'),node('small',format(part.weight*100/value.totalWeight)+'%'));row.append(weight);
+    for(const [raw,contribution] of [[part.firstRawScore,part.firstContribution],[part.secondRawScore,part.secondContribution]]){
+      const cell=node('td');cell.append(node('span',copy.score+': '+(raw===null?copy.unscored:String(raw))),node('span',copy.contribution+': '+t('points',{score:format(contribution)}),'data-value'));row.append(cell);
+    }
+    const delta=node('td');delta.append(node('span',t('points',{score:formatSignedPoints(part.deltaContribution)}),'data-value'),node('span',part.deltaNumerator===0?t('comparisonSame'):t('comparisonFavours',{name:part.deltaNumerator>0?first:second})));row.append(delta);body.append(row);
+  });
+  table.append(body);scroll.append(table);comparison.append(scroll);
+  comparison.append(node('p',t('comparisonFormula')+': 25 × ('+value.ranked[0].numerator+' − '+value.ranked[1].numerator+') ÷ '+value.totalWeight+' = '+format(value.totalDeltaScore),'formula'));
+  return comparison;
 }
 function renderEditor(focusId) {
   pendingRemoval=null;

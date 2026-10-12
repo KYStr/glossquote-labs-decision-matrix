@@ -75,3 +75,32 @@ Cloudflare設定僅候選，無正式部署/host驗收或帳戶/DNS改動。官�
 經source-review-v2清單審查的38檔副本於本工具專用github-publish目錄：`npm.cmd test` exit0 **31/31**，`npm.cmd run check` exit0，`npm.cmd run build` exit0，產物14，證實不用孵化器其他檔案。發布目標KYStr/glossquote-labs-decision-matrix已PUBLIC，implementation commit774dd595a1ed9f09ac1f466abba91756aa499309；copy local HEAD、Git ls-remote main、GitHub commits API一致，Git tree與reviewed path list一致、逐檔內容按換行正規化一致。真hosting仍未部署。
 
 來源核驗helper初次以泛用token子字串過濾，誤拒必要CSS tokens.css；改成與已審查精確38檔清單比對，exit0。這是核驗器false positive修正，沒有放行新來源/隱藏資料；公開樹始終同38檔。此後只發布候選/驗收紀錄的documentation-only更新，不變更已通過的程式，不重跑無關gate。
+# U08 新版候選紀錄 — 2026-10-13
+
+任務：U08-CONTRIBUTION-DELTA-20261013。沿既有 Product App／worksheet 做一次介面增量；常見內容為原排行、前列 pair 總差與完整平手群組、單表最多8準則；進階推導仍是原單層details。可編輯矩陣保留主導位置，共用tokens不變，沒有圖表、推薦、任意pair或新依賴。
+
+focused已執行：`node --test test/comparison.test.mjs test/scoring.test.mjs test/i18n.test.mjs` exit0（15/15，新增i18n案例前）；`node --test test/comparison-controller.test.mjs test/i18n.test.mjs` exit0（7/7）。證據在本機 `.runs/08-decision-matrix-outcome-2026-10-13/owner-focused-{core,controller}.log`。
+
+| 範圍 | 已取得的證據與限制 |
+|---|---|
+| U08-01/02/03 | 手算基準±100/3／0、原分子總差100/3、cost排序後按ID取raw score、方向切換不改raw；純函式PASS。 |
+| U08-04/05 | 1/1/1/4與1/2/2/4完整群組、同步重排後pairA/C；純函式PASS。新原生群組呈現NOT_RUN。 |
+| U08-06/07 | 0權重null不變／active=false；ZERO_WEIGHT、missingCount及invalid固定錯誤無partial value；純函式與實際app事件處理的離線DOM harness PASS。 |
+| U08-08 | 八項3.125各顯示+3.13，rounded加總25.04但總差25.00；兩語rounding不再宣稱0.01。純函式／文案契約PASS。 |
+| U08-09/10 | 真app handlers在離線DOM harness中驗缺分／名稱／權重／方向／增刪清舊pair、文字DOM；輸出schemaVersion1五個根keys與原UTF-8 bytes相同。這不是原生瀏覽器證據。 |
+| U08-11 | frozen inputs無mutation；900個有界獨立oracle，比對原始raw utility真值、逐項整數差合計、≤1e−12／finite／safe integer。PASS。 |
+| U08-12 | 兩語真app handlers的離線DOM harness驗匯入review／取消／壞檔／確認、清空取消／确认及下載bytes；PASS。OS chooser／原生兩語／keyboard／320px／200%zoom／8×8／40字重排NOT_RUN。 |
+
+原生驗收受阻：新版Windows computer-use工具在本工具頁面載入前，自動安全審查不能可靠識別Chrome目前URL並停止本turn。未重試不明分頁、未繞過限制、未以DOM harness／fake screenshot冒充瀏覽器結果。先前2026-10-10／11的browser PASS只屬舊版，不套用到U08。此次没有新版截圖或原生隱私Network／Storage觀察；物理離線、Firefox、真手機／觸控、screen reader也NOT_RUN。
+
+主代理已明確授權：保留上述documented NOT_RUN後完成settled自動gate及候選PUBLIC source-only／固定ZIP；主代理另以明確URL綁定的Edge/CUA專用分頁做必要原生驗收，owner不得算自己的browser通過。新版本尚未部署／主驗／外驗，不標complete。正式hosting與雙語首頁由主代理處理。
+
+本地預覽（public，無HMR）：`http://127.0.0.1:63055/`、`http://127.0.0.1:63055/en/index.html`，task-owned Node session16065；保留供主代理验收，不停止其他程序。11個local chooser fixtures含65536／65537bytes及invalid JSON在專用.runs，不公開或自動讀取真檔。package settled gates／源碼hash／固定commit／環境fingerprint結果由下方收尾補記。
+
+## U08 settled 自動化結果
+
+本工具目錄 final commands：`npm.cmd test` exit0 **44/44**（無skip/fail）；`npm.cmd run check` exit0；`npm.cmd run build` exit0（preview15）；`npm.cmd run build -- --production --origin=https://decide.glossquote.com` exit0（production-candidate16）。新core模組被原check白名單自然涵蓋，不需降低或修改check。證據：owner-final-{test,check,preview-build,production-build}.log及owner-gates.json。這一輪各package gate在settled程式上執行一次；之後只補交接與來源封裝紀錄，未重跑無關gate。
+
+實改程式只有 app／i18n／新comparison／兩語HTML／app.css，新增comparison與controller測試、補i18n測試。scoring、schema、json-import、file-io、matrix、tokens、headers、build/serve/check/package均維持輸入快照原bytes。新 `compareLeadingPair` 同時傳回既有ranked供UI共用，仍為單一scoreDocument公式來源。來源審查、diff whitespace、Git blob／ZIP逐檔SHA及環境fingerprints由local HANDOFF和固定外部manifest記錄；不把manifest自身塞進commit避免循環hash。源碼公開不等於新版live／主驗通過。
+
+以下全為原 MVP／發布歷史。

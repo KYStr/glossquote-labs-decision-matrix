@@ -73,3 +73,23 @@ for (const source of [duplicateLiteral, duplicateEscaped]) {
 對每個分數與權重作有界測試：score1..5、weight0/1/100，各方向下分數必在0..100；同時增加所有方案同樣的正權重倍數且不超100時排序與分數不變。這些性質測試不能替代M02–M05手算案例。
 
 逐項記錄docs/VERIFICATION.md：命令、自動／手動區別、瀏覽器版本、日期、狀態、缺陷與復測。`npm test`不代表檔案下載或畫面已通過；不能把「點擊成功」當作使用者硬碟保存成功。
+# U08 增量驗收（2026-10-13）
+
+原驗收歷史保留；新版不能沿用舊版外驗通過。精確 fixture 均為 schemaVersion1 的合成資料。執行結果在 docs/VERIFICATION，不由本表的預期推定 PASS。
+
+| ID | 必要結果 |
+|---|---|
+| U08-01 | 權重2/1 benefit/cost，A[5,5]/B[3,1]均66.67並列；逐項整數差+4/−4，顯示+33.33/−33.33；總差0.00，沒有勝者。 |
+| U08-02 | A[5,1]/B[3,1]總分100.00/66.67，總差由原分子12−8得33.33。 |
+| U08-03 | cost A5/B1排序B/A，raw score1/5按ID取得；切benefit後raw不變，pair及表名同步重選。 |
+| U08-04 | 四方案5/5/5/1，ranks1/1/1/4，完整A/B/C並列第一，pair原序A/B。 |
+| U08-05 | 四方案5/4/4/1，ranks1/2/2/4；B/C第二群組完整。同步調換原序後pairA/C，不改競賽名次。 |
+| U08-06 | 權重1/0，A[5,null]/B[3,null]可算100/50；inactive原null仍未評分、未計入，貢獻／差0。 |
+| U08-07 | 全0權重、正權重null、無效名稱／權重各回既有固定錯誤，無部分排名或舊pair／總差／表。 |
+| U08-08 | 八項weight1 benefit，A全2/B全1，各差3.125顯示3.13；rounded合計25.04，原分子總差25.00，不造補差列或0.01上限。 |
+| U08-09 | 評分／權重／方向／標籤及增刪當次重算；新無效／缺漏立即清舊區，修正後只顯示最新pair。 |
+| U08-10 | script-looking名字只textContent；計算前後serialize bytes相同，匯入仍exact schemaVersion1，沒有衍生欄位。 |
+| U08-11 | frozen doc無mutation；900個weight0/1/100、benefit/cost、score1..5的獨立oracle；逐项ΔN合計等於總ΔN，未rounded誤差≤1e−12，所有數有限／分子safe integer。 |
+| U08-12 | 匯入待確認／取消／壞檔及清空取消保留，確認才重算或清除；兩語原生操作／keyboard／320px／200%／8×8／40字，局部表捲動與周邊重排。 |
+
+focused：`node --test test/comparison.test.mjs test/comparison-controller.test.mjs test/scoring.test.mjs test/i18n.test.mjs`。settled版本必要 gate：`npm.cmd test`、`npm.cmd run check`、preview build、`npm.cmd run build -- --production --origin=https://decide.glossquote.com`；有意義的來源差異做 `git diff --check`。Windows environment-key fingerprints前後一致。未跑原生項目如實 NOT_RUN；必要結果錯、殘留、schema改形、不安全DOM或隱私回歸阻止候選發布。

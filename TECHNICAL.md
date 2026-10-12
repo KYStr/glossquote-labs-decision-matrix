@@ -63,12 +63,20 @@ JSON.parse後仍檢查原文重複key與深度：grammar已合法，用迭代sca
 - `validateDocument(value)`→`{ok:true,value:全新正規化document}` 或 `{ok:false,code}`，不修改輸入。將shape/欄位類型先驗證再處理文字或數字；未知版本單独回UNKNOWN_VERSION。UI raw draft先明確解析字串權重再建立candidate，不能把JSON import字串權重視同UI數字。
 - `parseImportBytes(bytes)`→同上，僅接受Uint8Array、上限65536；順序為byte檢查→UTF8→JSON→重複key/深度→validateDocument。錯誤不含原文。
 - `scoreDocument(doc)`→`{ok:true,value:{totalWeight,ranked:[{optionId,numerator,score,rank,tied,contributions}]}}`或錯誤。先validateDocument；W=0回ZERO_WEIGHT；再數權重>0的null格，缺漏回MISSING_SCORES並只附`missingCount`整數；沒有部分排行。
-- 分子N=`sum(weight*(benefit?score-1:5-score))`。0權重格不讀score而貢獻0。W≤800、N≤3200，是精確整數。score=25*N/W；contributions各項=25*w*u/W，展示2位小數但總分直接從N算，不加總已四捨五入貢獻。貢獻顯示的加總可能有0.01差，UI說明。
+- 分子N=`sum(weight*(benefit?score-1:5-score))`。0權重格不讀score而貢獻0。W≤800、N≤3200，是精確整數。score=25*N/W；contributions各項=25*w*u/W，展示2位小數但總分直接從N算，不加總已四捨五入貢獻。各項分別四捨五入，顯示值相加可能與總分或總差不同；不宣稱最多差0.01。8項各3.125顯示3.13時合計25.04，原始總分仍25.00。
 - 排序用`b.numerator-a.numerator`，相同N維持options原序。rank=前方N更高的方案數+1，tied=任一其他方案N相等。分數展示`score.toFixed(2)`；權重百分比同樣兩位但不反向作計算。
 - `serializeDocument(doc)`→`Result<Uint8Array>`，固定回`{ok:true,value:bytes}`或`{ok:false,code}`。先validateDocument，失敗原樣傳遞該schema錯誤碼；成功後用`JSON.stringify(normalized,null,2)+"\n"`建立字串，再以TextEncoder編成UTF-8 Uint8Array，無BOM；確認byteLength≤65536。編碼／序列化例外或此輸出上限失敗一律EXPORT_FAILED，不帶例外或原文。只輸出schema字段，不帶排名、日期、版本外meta、瀏覽器或裝置識別。下載adapter以`new Blob([result.value],{type:"application/json"})`使用bytes，不再JSON.stringify或二次編碼。
 - `addOption/removeOption/addCriterion/removeCriterion` 回`{ok:true,value:全新document}`；增至超過上限回LIMIT_REACHED，刪至低於下限回MINIMUM_REQUIRED，無效引用回INVALID_REFERENCE，失敗原document不變。ID取當前未使用的最小正整數尾碼，移除後可重用。陣列增刪同步更新score行/列。新增名稱以原項目數+1起向上找最小未使用編號名稱（例如兩個預設方案之後是方案3）；禁止重排而不同步values。UI確認流程不放在純函式內。
 
 ## 匯入狀態與安全DOM
+
+### U08 衍生比較契約
+
+`core/comparison.mjs` 匯出 `compareLeadingPair(input)`，只呼叫既有 `scoreDocument`，不另寫 utility、validation 或排名公式。失敗原樣回固定錯誤／missingCount，沒有部分 value。成功 `{ok:true,value}` 保留 `totalWeight/ranked` 供原排行共用，另有 `firstOptionId/secondOptionId/firstRank/secondRank/firstRankOptionIds/secondRankOptionIds/totalDeltaNumerator/totalDeltaScore/tied/criteria`。
+
+兩方案取 stable ranked 的前兩項，完整群組依原 rank 取得。每列 criterionId／weight／direction／active、原 raw score、兩個 part numerator／contribution 與 delta。raw scores 透過 optionId Map 查原文件列；準則維持文件順序。ΔN=firstPartN−secondPartN，Δ=25×ΔN/W；總ΔN=firstN−secondN，總Δ直接用整數總差，不減顯示值或加總 rounded 列。0權重列的 numerator/contribution/delta 為0，raw null不變。
+
+`i18n.formatSignedPoints` 只格式化顯示：正 `+33.33`、負 Unicode minus `−33.33`、精確零及−0均 `0.00`。新增 view 不進 input、schema、serializeDocument 或 import。`refresh` 共用此成功 value 重建原 ranking 和整個比較 section；失敗 replaceChildren 後只留原無排名提示。比較表具 caption/th scope、有標名 tabindex=0 的局部橫捲區，整表不是 live region。
 
 工作狀態`draft-invalid|incomplete|ready`；IO狀態`idle|reading|review|error`。開始選檔時記`generation++`，讀檔前檢查size，reading提供取消。每次await後先核對generation；舊結果一律丟棄。取消、另選檔、清空、pagehide使generation遞增。File.arrayBuffer本身不能可靠中止，取消表示取消後續套用並釋放引用，不聲稱立刻停止OS讀取。
 
